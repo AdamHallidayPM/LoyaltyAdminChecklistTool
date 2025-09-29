@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loyalty Admin Checklist Tool</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(to right, #eef2f3, #8e9eab);
+      color: #333;
+    }
+
+    h1, h2, h3 {
+      color: #0078D7;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      animation: fadeIn 0.6s ease;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 5px;
+    }
+
+    .btn-blue {
+      background: linear-gradient(to right, #0077cc, #00aaff);
+      color: white;
+    }
+
+    .btn-blue:hover {
+      background: linear-gradient(to right, #005fa3, #008ecc);
+      transform: scale(1.05);
+    }
+
+    .btn-red {
+      background: linear-gradient(to right, #dc3545, #ff6b6b);
+      color: white;
+    }
+
+    .btn-red:hover {
+      background: linear-gradient(to right, #c82333, #ff4c4c);
+      transform: scale(1.05);
+    }
+
+    #search-bar {
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 16px;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .selected {
+      background-color: #d0e7ff !important;
+    }
+
+    .section {
+      margin-top: 20px;
+    }
+
+    .info-box {
+      background: #f4f4f4;
+      padding: 15px;
+      border-left: 4px solid #0078D7;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      animation: slideUp 0.4s ease;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal {
+      background: white;
+      padding: 20px;
+      max-width: 600px;
+      width: 90%;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      color: #0078D7;
+    }
+
+    .modal label {
+      display: block;
+      margin: 10px 0 4px;
+      font-weight: bold;
+    }
+
+    .modal input[type="text"], .modal textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    .modal textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    .modal-actions {
+      text-align: right;
+      margin-top: 10px;
+    }
+
+    #cease-template-text {
+      width: 100%;
+      height: 300px;
+      resize: vertical;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 14px;
+      box-sizing: border-box;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: #f4f4f4;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @media (max-width: 600px) {
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+<h1 style="text-align: center;">✅ Loyalty Admin Checklist Tool</h1>
+  
+
+  <div class="container">
+    <input type="text" id="search-bar" placeholder="🔍 Search for a product..." oninput="filterProducts()">
+
+<h3>Suppliers</h3>
+
+    <div class="section" id="supplier-container"></div>
+    <div class="section" id="product-container"></div>
+    <div class="section" id="info-container"></div>
+
+<h3>Links</h3>
+<button class="btn btn-blue" id="open-cease">Cease Template</button>
+
+<button class="btn btn-blue" id="open-portals">Supplier Portals</button>
+
+<!-- Portals Modal -->
+<div class="modal-backdrop" id="portals-modal-backdrop">
+  <div class="modal">
+    <h3>Supplier Portals</h3>
+    <ul>
+      <li><a href="https://www.btwholesale.com/" target="_blank">BT Wholesale</a></li>
+      <li><a href="https://www.gamma-portal.com/login.jspa" target="_blank">Gamma</a></li>
+      <li><a href="https://daisycomms.advancedservicesportal.com/Login" target="_blank">Nasstar</a></li>
+      <li><a href="https://ttbportal.mytalktalkbusiness.co.uk/Home/PortalCore/SignIn/SignIn.aspx?ReturnUrl=%2fLLU%2fDefault.aspx" target="_blank">TalkTalk/PXC</a></li>
+    </ul>
+    <div class="modal-actions">
+      <button class="btn btn-red" id="portals-modal-close">Close</button>
+    </div>
+  </div>
+</div>
+
+  </div>
+
+  <!-- Cease Template Modal -->
+  <div class="modal-backdrop" id="cease-modal-backdrop">
+    <div class="modal">
+      <h3>Cease Template</h3>
+      <textarea id="cease-template-text" readonly>
+Cease Template:
+Account Name:
+Account Number:
+Best contact name:
+Contact Number:         
+Cease Date:
+Loyalty Opp:
+Billing end dated: (Y/N)
+System: WLR/HVS/DHV/LL/NTS/NMS
+4Com Cease: (Y/N)
+Please attach ELO
+Services to port away:
+Full Cease: (Y/N)
+Full list of CLI’s to cease (including account level and maintenance):
+Services to remain live:
+ETF’s charged: (Y/N)
+If so, total ETF charges/breakdown (ATTACH SPREADSHEET DO NOT COPY AND PASTE)
+      </textarea>
+      <div class="modal-actions">
+        <button class="btn btn-blue" id="copy-cease-template">Copy to Clipboard</button>
+        <button class="btn btn-red" id="cease-modal-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+<head>
+  <style>
+    .info-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    .info-section h3 {
+      text-align: center;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+    }
+
+    .info-section ul {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+
+    .info-section li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="info-section">
+    <h3>ℹ️ Useful Info</h3>
+    <ul>
+      <li>If a number of services have the same billing date and price then you can combine these on the ETF calculator e.g. DHV x 12</li>
+      <li>Any Services on the same account can be bundled on the ETF calculator</li>
+      <li>For UP notifications, you will need to work out the ETFs for everything VoIP on the invoice as usually the whole system will be leaving</li>
+      <li>Make Sure to save your ETF / notice calculations into a folder and attach in the notes on the op</li>
+      <li>SIP Services - these will bill under a "DC2N" ref and state SIP</li>
+      <li>Always include MOO if billing on SIP Channel</li>
+      <li>Don't charge ETFs for Updates and Changes, Business Assurance, Select Services or Fraud Guardian</li>
+      <li>If the op is for a Health CS account, assign to Health CS & Billing without calculating ETFs</li>
+    </ul>
+  </div>
+</body>
+
+<head>
+  <style>
+    .rollover-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    .rollover-section h3 {
+      text-align: center;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+    }
+
+    .rollover-section ul {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+
+    .rollover-section li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="rollover-section">
+    <h3>🔄 Rollover</h3>
+    <ul>
+      <li>If the customer is out of contract, this will have rolled and the billing start date will be the date/month from billing set up but use the current year if the date has already passed or is within the next 90 days. If not, use the previous year.</li>
+    </ul>
+  </div>
+</body>
+
+
+<head>
+  <style>
+    .etf-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    .etf-section h3 {
+      text-align: center;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+    }
+
+    .etf-section ul {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+
+    .etf-section li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="etf-section">
+    <h3>🧮 ETF Calculator</h3>
+    <ul>
+      <li>Telephone number – Use the number from the op (CLI)</li>
+      <li>Service Description – Take this from the invoice</li>
+      <li>Billing start date – Use the "Discount start date" in billing set up</li>
+      <li>Early Termination Date – Use the end date in the op (expected close date)</li>
+      <li>Monthly line rental – Take this from the invoice (check for any 2x quantities)</li>
+      <li>Contract length – This can be checked on the contract</li>
+    </ul>
+  </div>
+</body>
+
+
+
+<div style="text-align: center;">
+  <button class="btn btn-blue" id="open-feedback">Feedback / Request Update</button>
+</div>
+
+<p style="text-align: center;"><em>Version: 1.12</em></p>
+
+  <!-- Feedback Modal -->
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal">
+      <h3>Send Feedback or Request Update</h3>
+      <label for="fb-supplier">Supplier</label>
+      <input type="text" id="fb-supplier" placeholder="Supplier name">
+      <label for="fb-product">Product</label>
+      <input type="text" id="fb-product" placeholder="Product name">
+      <label for="fb-product-info">Product Info</label>
+      <textarea id="fb-product-info" placeholder="Paste or type product info"></textarea>
+      <label for="fb-notes">Notes</label>
+      <textarea id="fb-notes" placeholder="Your notes or request"></textarea>
+      <div class="modal-actions">
+        <button class="btn btn-red" id="modal-cancel">Cancel</button>
+        <button class="btn btn-blue" id="modal-send">Send Email</button>
+      </div>
+    </div>
+  </div>
+<script>
+  const data = {
+
+
+
+      "BT Wholesale": {
+
+
+        "Broadband (ADSL, FTTC, SOGEA, FTTP)":
+
+`<h2>Broadband (ADSL, FTTC, SOGEA, FTTP)</h2>
+Internet service provided over BT’s network.
+
+<h3>Checklist</h3>- BBEU notification comes into an opportunity. 
+- Is this service to port away? 
+- Work out ETFs/ notice periods, send customer letter. 
+- Once completion is received and it is advising you it is ceased, check billing setup and end date in line with service cease date. 
+`,
+
+
+
+        "HVS (Hosted Voice Select)":
+
+`<h2>HVS (Hosted Voice Select)</h2>
+The Fully Hosted version of BT WHC is a complete cloud-based telephony solution that replaces traditional on-premise PBX systems.
+It provides users with voice, video, and messaging capabilities through desk phones, softphones, and mobile apps, all managed centrally via BT’s secure network.
+Features include call recording, voicemail, auto-attendant, and advanced call routing—all accessible from anywhere.
+
+<h3>Checklist</h3>- Is this a reseller to reseller? 
+- Is the number porting away the main system number? 
+- Have you checked the most recent DHV/HVS order?
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is an indication of what the customers solution is and will help you identify the services in billing set up.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This will also advise you of the main system number. 
+- Also check all account level services in Billing Setup
+- Check the contract for how many employees the business has and check Endole to see if this matches.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This will help determine notice periods/ Rollovers. 
+- Once all the above is identified, note your findings within your opp. 
+- Work out the ETFS/Notice period and send customer letter.
+- If the customer is 30+ assign the opp to their base with the hopes of retaining. 
+- If the account cannot be retained, your investigations within your case will help you end date all the services in billing setup
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It will also help you list what is needed on the cease template for removal of services from the portals.
+- Please make sure to add ETFs/ notice periods in billing setup. 
+- Have you received port completion within your opp? 
+- Assign your cease case to the Cease Team using the process template.  
+`,
+
+
+
+
+        "SIP Trunk":
+
+`<h2>SIP Trunk</h2>
+The SIP Trunking version of HVS uses BT’s SIP trunks to route calls over the internet, replacing legacy ISDN lines and enabling PSTN breakout.
+
+<h3>Checklist</h3>- Do we provide the phone system (PBX) maintenance?
+- Does the SIP trunk need to be cancelled or just the support?
+- Are they still using the trunk for calls?
+- Are there any numbers that need porting?
+- Is the PBX still in use or being replaced?`,
+
+
+
+        "WHC (DHV Lite)":
+
+`<h2>WHC (DHV Lite)</h2>
+The Fully Hosted version of BT WHC is a complete cloud-based telephony solution that replaces traditional on-premise PBX systems.
+It provides users with voice, video, and messaging capabilities through desk phones, softphones, and mobile apps, all managed centrally via BT’s secure network.
+Features include call recording, voicemail, auto-attendant, and advanced call routing—all accessible from anywhere.
+
+<h3>Checklist</h3>- Is this a reseller to reseller? 
+- Is the number porting away the main system number? 
+- Have you checked the most recent DHV/HVS order?
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is an indication of what the customers solution is and will help you identify the services in billing set up.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This will also advise you of the main system number. 
+- Also check all account level services in Billing Setup
+- Check the contract for how many employees the business has and check Endole to see if this matches.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This will help determine notice periods/ Rollovers. 
+- Once all the above is identified, note your findings within your opp. 
+- Work out the ETFS/Notice period and send customer letter.
+- If the customer is 30+ assign the opp to their base with the hopes of retaining. 
+- If the account cannot be retained, your investigations within your case will help you end date all the services in billing setup
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It will also help you list what is needed on the cease template for removal of services from the portals.
+- Please make sure to add ETFs/ notice periods in billing setup. 
+- Have you received port completion within your opp? 
+- Assign your cease case to the Cease Team using the process template.  
+`,
+
+
+
+
+        "WLR":
+`<h2>WLR</h2>
+Old-style landline service using copper lines. 
+Being phased out.
+
+<h3>Checklist</h3>- Is the line still in use (e.g. for broadband, alarms, card machines)?
+- Do they want to keep the number?`,
+
+
+
+      },
+
+
+
+
+      "Gamma": {
+
+
+        "DHV (Daisy Hosted Voice)":
+
+`<h2>DHV (Daisy Hosted Voice)</h2>
+The Fully Hosted version of Gammas Horizon product is a complete cloud-based telephony solution that replaces traditional on-premise PBX systems.
+It provides users with voice, video, and messaging capabilities through desk phones, softphones, and mobile apps, all managed centrally via Gammas secure network.
+Features include call recording, voicemail, auto-attendant, and advanced call routing—all accessible from anywhere.
+
+<h3>Checklist</h3>- Is this a reseller to reseller? 
+- Is the number porting away the main system number? 
+- Have you checked the most recent DHV/HVS order?
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is an indication of what the customers solution is and will help you identify the services in billing set up.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This will also advise you of the main system number. 
+- Also check all account level services in Billing Setup
+- Check the contract for how many employees the business has and check Endole to see if this matches.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This will help determine notice periods/ Rollovers. 
+- Once all the above is identified, note your findings within your opp. 
+- Work out the ETFS/Notice period and send customer letter.
+- If the customer is 30+ assign the opp to their base with the hopes of retaining. 
+- If the account cannot be retained, your investigations within your case will help you end date all the services in billing setup
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It will also help you list what is needed on the cease template for removal of services from the portals.
+- Please make sure to add ETFs/ notice periods in billing setup. 
+- Have you received port completion within your opp? 
+- Assign your cease case to the Cease Team using the process template.    `,
+
+        "Direct Routing":
+
+`<h2>Direct Routing</h2>
+Using Gamma’s SIP trunking it connects Microsoft Teams to the PSTN
+Enables full voice calling directly from Teams without Microsoft Calling Plans.
+
+<h3>Checklist</h3>- TBC`,
+
+        "Inbound":
+
+`<h2>Inbound</h2>
+An Inbound Number is a versatile telephony solution that uses a non-geographic number—typically beginning with 03 or 08—that isn’t tied to a physical location.
+It enables businesses to receive calls from anywhere in the UK while maintaining a national presence and protecting their geographic anonymity.
+
+Inbound numbers are commonly configured for 1-2-1 routing, directing calls to a single destination such as a mobile or landline.
+However, they can also support advanced call plans, allowing calls to be routed dynamically based on time of day, caller location, availability, or other business rules.
+
+<h3>Checklist</h3>- Is it still routing calls?
+- Is it linked to other services (e.g. Horizon, SIP trunk)?`,
+
+
+        "Operator Connect":
+
+`<h2>Operator Connect</h2>
+Using Gamma’s SIP trunking it connects Microsoft Teams to the PSTN
+Enables full voice calling directly from Teams without Microsoft Calling Plans.
+
+<h3>Checklist</h3>- TBC`,
+
+
+        "Phoneline+ (DHV Lite)":
+
+`<h2>Phoneline+ (DHV Lite)</h2>
+Simple cloud phone service for small businesses. 
+Replaces old landlines. 
+Can use desk phones or mobile apps.
+
+<h3>Checklist</h3>- Is the line still active?
+- Do they want to keep the number?
+- Is it linked to any broadband or alarm system?`,
+
+
+
+
+        "SIP Trunk":
+
+`<h2>SIP Trunk</h2>
+Not fully hosted. Customer has a phone system (PBX) on-site. 
+We may or may not provide a maintenance contract for it.
+
+<h3>Checklist</h3>- Do we provide the phone system (PBX) maintenance?
+- Does the SIP trunk need to be cancelled or just the support?
+- Are they still using the trunk for calls?
+- Are there any numbers that need porting?
+- Is the system still in use or being replaced?`,
+
+
+
+      },
+
+
+
+      "Nasstar":
+
+ {
+        "Inbound":
+
+`<h2>Inbound</h2>
+An Inbound Number is a versatile telephony solution that uses a non-geographic number—typically beginning with 03 or 08—that isn’t tied to a physical location.
+It enables businesses to receive calls from anywhere in the UK while maintaining a national presence and protecting their geographic anonymity.
+
+Inbound numbers are commonly configured for 1-2-1 routing, directing calls to a single destination such as a mobile or landline.
+However, they can also support advanced call plans, allowing calls to be routed dynamically based on time of day, caller location, availability, or other business rules.
+
+<h3>Checklist</h3>- Is this linked to any other system (e.g. DHV or SIP)?`
+      },
+
+
+      "Talk Talk/PXC":
+
+ {
+        "Broadband Only (MPF)":
+
+`<h2>Broadand Only (MPF)</h2>
+Internet service provided over TalkTalk’s network.
+
+<h3>Checklist</h3>- Are they still using the broadband?
+- Is it linked to any phone service?`,
+
+
+        "Inbound":
+
+`<h2>Inbound</h2>
+An Inbound Number is a versatile telephony solution that uses a non-geographic number—typically beginning with 03 or 08—that isn’t tied to a physical location.
+It enables businesses to receive calls from anywhere in the UK while maintaining a national presence and protecting their geographic anonymity.
+
+Inbound numbers are commonly configured for 1-2-1 routing, directing calls to a single destination such as a mobile or landline.
+However, they can also support advanced call plans, allowing calls to be routed dynamically based on time of day, caller location, availability, or other business rules.
+
+<h3>Checklist</h3>- Is this linked to any other system (e.g. DHV or SIP)?`,
+
+
+        "Line and Broadband (SMPF)":
+
+`<h2>Line and Broadband (SMPF)</h2>
+Voice and Internet service provided over TalkTalk’s network.
+
+<h3>Checklist</h3>- Is the line still in use (e.g. for broadband, alarms, card machines)?
+- Do they want to keep the number?`,
+
+
+      },
+
+    };
+
+
+const openPortalsBtn = document.getElementById('open-portals');
+const portalsModal = document.getElementById('portals-modal-backdrop');
+const closePortalsBtn = document.getElementById('portals-modal-close');
+
+openPortalsBtn.addEventListener('click', () => {
+  portalsModal.style.display = 'flex';
+});
+
+closePortalsBtn.addEventListener('click', () => {
+  portalsModal.style.display = 'none';
+});
+
+
+  const supplierContainer = document.getElementById('supplier-container');
+  const productContainer = document.getElementById('product-container');
+  const infoContainer = document.getElementById('info-container');
+  const searchBar = document.getElementById('search-bar');
+
+  Object.keys(data).forEach(supplier => {
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-blue';
+    btn.textContent = supplier;
+    btn.onclick = () => showProducts(supplier);
+    supplierContainer.appendChild(btn);
+  });
+
+  function showProducts(supplier) {
+    document.querySelectorAll('.btn-blue').forEach(btn => btn.classList.remove('selected'));
+    event.target.classList.add('selected');
+
+    productContainer.innerHTML = `<h3>Products from ${supplier}</h3>`;
+    infoContainer.innerHTML = '';
+    searchBar.style.display = 'none';
+
+    const backBtn = document.createElement('button');
+    backBtn.textContent = '← Reset';
+    backBtn.className = 'btn btn-red';
+    backBtn.onclick = () => {
+      productContainer.innerHTML = '';
+      infoContainer.innerHTML = '';
+      searchBar.style.display = 'block';
+      document.querySelectorAll('.btn-blue').forEach(btn => btn.classList.remove('selected'));
+    };
+    productContainer.appendChild(backBtn);
+
+    Object.keys(data[supplier]).forEach(product => {
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-blue';
+      btn.textContent = product;
+      btn.onclick = (e) => showInfo(data[supplier][product], e.target, supplier, product);
+      productContainer.appendChild(btn);
+    });
+  }
+
+  function showInfo(info, targetBtn, supplierName, productName) {
+    document.querySelectorAll('.btn-blue').forEach(btn => btn.classList.remove('selected'));
+    targetBtn.classList.add('selected');
+    infoContainer.innerHTML = `<div class="info-box">${info.replace(/\n/g, '<br>')}</div>`;
+
+    document.getElementById('fb-supplier').value = supplierName || '';
+    document.getElementById('fb-product').value = productName || '';
+    document.getElementById('fb-product-info').value = info || '';
+  }
+
+  function filterProducts() {
+    const query = searchBar.value.toLowerCase();
+    productContainer.innerHTML = '';
+    infoContainer.innerHTML = '';
+    if (!query) return;
+
+    Object.entries(data).forEach(([supplier, products]) => {
+      Object.entries(products).forEach(([product, info]) => {
+        if (product.toLowerCase().includes(query)) {
+          const btn = document.createElement('button');
+          btn.className = 'btn btn-blue';
+          btn.textContent = `${product} (${supplier})`;
+          btn.onclick = (e) => showInfo(info, e.target, supplier, product);
+          productContainer.appendChild(btn);
+        }
+      });
+    });
+  }
+
+  // Cease modal
+  const openCeaseBtn = document.getElementById('open-cease');
+  const ceaseModal = document.getElementById('cease-modal-backdrop');
+  const closeCeaseBtn = document.getElementById('cease-modal-close');
+
+  openCeaseBtn.addEventListener('click', () => {
+    ceaseModal.style.display = 'flex';
+  });
+
+  closeCeaseBtn.addEventListener('click', () => {
+    ceaseModal.style.display = 'none';
+  });
+
+  document.getElementById('copy-cease-template').addEventListener('click', () => {
+    const textArea = document.getElementById('cease-template-text');
+    textArea.select();
+    textArea.setSelectionRange(0, 99999);
+    document.execCommand('copy');
+    alert('Template copied to clipboard!');
+  });
+
+  // Feedback modal
+  const openBtn = document.getElementById('open-feedback');
+  const backdrop = document.getElementById('modal-backdrop');
+  const cancelBtn = document.getElementById('modal-cancel');
+  const sendBtn = document.getElementById('modal-send');
+
+  openBtn.addEventListener('click', () => {
+    backdrop.style.display = 'flex';
+    document.getElementById('fb-supplier').value = '';
+    document.getElementById('fb-product').value = '';
+    document.getElementById('fb-product-info').value = '';
+    document.getElementById('fb-notes').value = '';
+  });
+
+  cancelBtn.addEventListener('click', () => {
+    backdrop.style.display = 'none';
+  });
+
+  backdrop.addEventListener('click', (ev) => {
+    if (ev.target === backdrop) {
+      backdrop.style.display = 'none';
+    }
+  });
+
+  sendBtn.addEventListener('click', () => {
+    const supplier = document.getElementById('fb-supplier').value.trim();
+    const product = document.getElementById('fb-product').value.trim();
+    const productInfo = document.getElementById('fb-product-info').value.trim();
+    const notes = document.getElementById('fb-notes').value.trim();
+
+    const bodyLines = [
+      `Supplier: ${supplier}`,
+      `Product: ${product}`,
+      `Product Info:`,
+      `${productInfo}`,
+      `Notes:`,
+      `${notes}`
+    ];
+    const body = encodeURIComponent(bodyLines.join('\n\n'));
+    const subject = encodeURIComponent(`Loyalty Admin Checklist Tool / Feedback / Request Update - ${supplier || 'Unknown Supplier'} - ${product || ''}`);
+
+    window.location.href = `mailto:adam.halliday@daisycomms.co.uk?subject=${subject}&body=${body}`;
+    backdrop.style.display = 'none';
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      ceaseModal.style.display = 'none';
+      backdrop.style.display = 'none';
+    }
+  });
+</script>
